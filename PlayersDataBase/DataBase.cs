@@ -26,7 +26,7 @@
 
             _storage[Id] = new Player(Id, name, level);
 
-            if (_storage.ContainsKey(++Id) == false) 
+            if (_storage.ContainsKey(++Id) == false && !_freeID.Contains(Id)) 
             {
                 _freeID.Push(Id);
             }
