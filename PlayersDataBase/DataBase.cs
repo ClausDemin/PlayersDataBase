@@ -13,7 +13,7 @@
             _freeID.Push(0);
         }
 
-        public IEnumerable<string[]> Players { get => GetData(); }
+        public IEnumerable<string[]> Players { get => GetPlayersData(); }
 
         public void AddPlayer(string name, uint level)
         {
@@ -68,7 +68,7 @@
             }
         }
 
-        private IEnumerable<string[]> GetData()
+        private IEnumerable<string[]> GetPlayersData()
         {
             foreach (var player in _storage.Values)
             {
