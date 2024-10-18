@@ -22,23 +22,26 @@
                 return false;
             }
 
-            uint ID = _freeID.Pop();
+            uint Id = _freeID.Pop();
 
-            _storage[ID] = new Player(ID, name, level);
+            _storage[Id] = new Player(Id, name, level);
 
-            _freeID.Push(++ID);
+            if (_storage.ContainsKey(++Id) == false) 
+            {
+                _freeID.Push(Id);
+            }
 
             return true;
         }
 
-        public bool TryRemovePlayer(uint ID)
+        public bool TryRemovePlayer(uint Id)
         {
-            if (_storage.ContainsKey(ID))
+            if (_storage.ContainsKey(Id))
             {
-                _storage[ID] = null;
-                _storage.Remove(ID);
+                _storage[Id] = null;
+                _storage.Remove(Id);
 
-                _freeID.Push(ID);
+                _freeID.Push(Id);
 
                 return true;
             }
@@ -46,11 +49,11 @@
             return false;
         }
 
-        public bool TryBanPlayer(uint ID)
+        public bool TryBanPlayer(uint Id)
         {
-            if (_storage.ContainsKey(ID))
+            if (_storage.ContainsKey(Id))
             {
-                _storage[ID].Ban();
+                _storage[Id].Ban();
 
                 return true;
             }
@@ -58,11 +61,11 @@
             return false;
         }
 
-        public bool TryUnbanPlayer(uint ID)
+        public bool TryUnbanPlayer(uint Id)
         {
-            if (_storage.ContainsKey(ID))
+            if (_storage.ContainsKey(Id))
             {
-                _storage[ID].Unban();
+                _storage[Id].Unban();
 
                 return true;
             }
