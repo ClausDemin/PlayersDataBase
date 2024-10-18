@@ -1,4 +1,4 @@
-﻿namespace PlayersDataBase
+﻿namespace PlayersDatabase
 {
     internal class DataBaseRecord<T>
         where T : class

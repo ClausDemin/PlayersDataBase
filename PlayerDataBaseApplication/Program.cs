@@ -1,13 +1,12 @@
-﻿using PlayersDataBase;
-using System.Formats.Asn1;
+﻿using PlayersDatabase;
 
-namespace PlayerDataBaseApplication
+namespace PlayerDatabaseApplication
 {
     public static class Program
     {
         public static void Main(string[] args)
         {
-            DataBase dataBase = new DataBase();
+            Database database = new Database();
 
             PrintCommandsList(new AvailableCommands());
 
@@ -20,23 +19,23 @@ namespace PlayerDataBaseApplication
                 switch (command)
                 {
                     case Commands.Add:
-                        HandleAddCommand(dataBase);
+                        HandleAddCommand(database);
                         break;
 
                     case Commands.Remove:
-                        HandleRemoveCommand(dataBase);
+                        HandleRemoveCommand(database);
                         break;
 
                     case Commands.Ban:
-                        HandleBanCommand(dataBase);
+                        HandleBanCommand(database);
                         break;
 
                     case Commands.Unban:
-                        HandleUnbanCommand(dataBase);
+                        HandleUnbanCommand(database);
                         break;
 
                     case Commands.Print:
-                        HandlePrintCommand(dataBase);
+                        HandlePrintCommand(database);
                         break;
                 }
 
@@ -71,7 +70,6 @@ namespace PlayerDataBaseApplication
                 PrintErrorMessage($"command {input} not exist");
                 command = Commands.Unknown;
             }
-
         }
 
         private static string AskForUserInput(string request)
@@ -81,7 +79,7 @@ namespace PlayerDataBaseApplication
             return Console.ReadLine();
         }
 
-        private static void HandleAddCommand(DataBase dataBase)
+        private static void HandleAddCommand(Database database)
         {
             string request = "please enter a username: ";
             string name = AskForUserInput(request);
@@ -91,13 +89,11 @@ namespace PlayerDataBaseApplication
 
             if (isParsed)
             {
-                try
+                if (database.TryAddPlayer(name, level) == false)
                 {
-                    dataBase.AddPlayer(name, level);
-                }
-                catch (Exception e)
-                {
-                    PrintErrorMessage(e.Message);
+                    string message = "\"name\" can't be empty";
+
+                    PrintErrorMessage(message);
                 }
             }
             else
@@ -106,59 +102,53 @@ namespace PlayerDataBaseApplication
             }
         }
 
-        private static void HandleRemoveCommand(DataBase dataBase)
+        private static void HandleRemoveCommand(Database database)
         {
             string request = "please enter player ID you wish to remove: ";
 
-            uint playerID = AskUserForPlayerID(request);
+            uint playerId = AskUserForPlayerId(request);
 
-            try
+            if (database.TryRemovePlayer(playerId) == false)
             {
-                dataBase.RemovePlayer(playerID);
-            }
-            catch (Exception e)
-            {
-                PrintErrorMessage(e.Message);
+                string message = $"player with Id: {playerId} not exist";
+
+                PrintErrorMessage(message);
             }
         }
 
-        private static void HandleBanCommand(DataBase dataBase)
+        private static void HandleBanCommand(Database database)
         {
             string request = "please enter player ID you wish to ban: ";
 
-            uint playerID = AskUserForPlayerID(request);
+            uint playerId = AskUserForPlayerId(request);
 
-            try
+            if (database.TryBanPlayer(playerId) == false)
             {
-                dataBase.BanPlayer(playerID);
-            }
-            catch (Exception e)
-            {
-                PrintErrorMessage(e.Message);
+                string message = $"player with Id: {playerId} not exist";
+
+                PrintErrorMessage(message);
             }
         }
 
-        private static void HandleUnbanCommand(DataBase dataBase)
+        private static void HandleUnbanCommand(Database database)
         {
             string request = "please enter player ID you wish to unban: ";
 
-            uint playerID = AskUserForPlayerID(request);
+            uint playerId = AskUserForPlayerId(request);
 
-            try
+            if (database.TryUnbanPlayer(playerId) == false)
             {
-                dataBase.UnbanPlayer(playerID);
-            }
-            catch (Exception e)
-            {
-                PrintErrorMessage(e.Message);
+                string message = $"player with Id: {playerId} not exist";
+
+                PrintErrorMessage(message);
             }
         }
 
-        private static void HandlePrintCommand(DataBase dataBase)
+        private static void HandlePrintCommand(Database database)
         {
             Console.WriteLine();
 
-            foreach (var player in dataBase.Players)
+            foreach (var player in database.Players)
             {
                 foreach (var property in player)
                 {
@@ -168,20 +158,20 @@ namespace PlayerDataBaseApplication
             }
         }
 
-        private static uint AskUserForPlayerID(string request)
+        private static uint AskUserForPlayerId(string request)
         {
-            bool isParsed = uint.TryParse(AskForUserInput(request), out uint playerID);
+            bool isParsed = uint.TryParse(AskForUserInput(request), out uint playerId);
 
             if (isParsed)
             {
-                return playerID;
+                return playerId;
             }
             else
             {
                 PrintErrorMessage("player ID must be integer greater than zero value");
             }
 
-            return AskUserForPlayerID(request);
+            return AskUserForPlayerId(request);
         }
     }
 }

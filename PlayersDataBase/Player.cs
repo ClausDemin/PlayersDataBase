@@ -1,16 +1,16 @@
-﻿namespace PlayersDataBase
+﻿namespace PlayersDatabase
 {
     internal class Player
     {
         public Player(uint identifier, string name, uint level)
         {
-            ID = identifier;
+            Id = identifier;
             Name = name;
             Level = level;
             IsBanned = false;
         }
 
-        public uint ID { get; }
+        public uint Id { get; }
         public string Name { get; private set; }
         public uint Level { get; private set; }
         public bool IsBanned { get; private set; }

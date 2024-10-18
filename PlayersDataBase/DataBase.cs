@@ -1,11 +1,11 @@
-﻿namespace PlayersDataBase
+﻿namespace PlayersDatabase
 {
-    public class DataBase
+    public class Database
     {
         private Dictionary<uint, Player> _storage;
         private Stack<uint> _freeID;
 
-        public DataBase()
+        public Database()
         {
             _storage = new Dictionary<uint, Player>();
             _freeID = new Stack<uint>();
@@ -13,13 +13,13 @@
             _freeID.Push(0);
         }
 
-        public IEnumerable<string[]> Players { get => GetPlayersData(); }
+        public IEnumerable<string[]> Players => GetPlayersData();
 
-        public void AddPlayer(string name, uint level)
+        public bool TryAddPlayer(string name, uint level)
         {
-            if (string.IsNullOrEmpty(name)) 
-            { 
-                throw new ArgumentNullException("name was null or empty");
+            if (string.IsNullOrEmpty(name))
+            {
+                return false;
             }
 
             uint ID = _freeID.Pop();
@@ -27,9 +27,11 @@
             _storage[ID] = new Player(ID, name, level);
 
             _freeID.Push(++ID);
+
+            return true;
         }
 
-        public void RemovePlayer(uint ID)
+        public bool TryRemovePlayer(uint ID)
         {
             if (_storage.ContainsKey(ID))
             {
@@ -37,35 +39,35 @@
                 _storage.Remove(ID);
 
                 _freeID.Push(ID);
+
+                return true;
             }
-            else
-            {
-                throw new KeyNotFoundException($"player with ID: {ID} not exist");
-            }
+            
+            return false;
         }
 
-        public void BanPlayer(uint ID)
+        public bool TryBanPlayer(uint ID)
         {
             if (_storage.ContainsKey(ID))
             {
                 _storage[ID].Ban();
+
+                return true;
             }
-            else
-            {
-                throw new KeyNotFoundException($"player with ID: {ID} not exist");
-            }
+
+            return false;
         }
 
-        public void UnbanPlayer(uint ID)
+        public bool TryUnbanPlayer(uint ID)
         {
             if (_storage.ContainsKey(ID))
             {
                 _storage[ID].Unban();
+
+                return true;
             }
-            else
-            {
-                throw new KeyNotFoundException($"player with ID: {ID} not exist");
-            }
+
+            return false;
         }
 
         private IEnumerable<string[]> GetPlayersData()
